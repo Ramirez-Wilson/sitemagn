@@ -37,9 +37,6 @@
                        class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 px-4 rounded mr-2 text-center sm:w-auto">
                        Editar
                     </a>
-
-                    <button type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900">Yellow</button>
-
                     <form action="{{ url('/empleado/'.$empleado->id) }}" method="post" class="inline-block">
                         @csrf
                         {{ method_field('DELETE') }}

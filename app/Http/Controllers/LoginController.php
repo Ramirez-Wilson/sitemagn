@@ -16,46 +16,35 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        // Validar los datos del formulario
         $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        // Buscar el usuario en la base de datos
-        $user = Login::where('username', $request->username)->first();
+        $credentials = $request->only('username', 'password');
 
-        // Validar credenciales
-        if ($user && Hash::check($request->password, $user->password)) {
-            // Autenticar al usuario
-            Auth::login($user);
-            return redirect()->route('dashboard'); // Cambia 'dashboard' por la ruta a donde quieras redirigir
+        // Agregar mensaje de depuración
+        logger()->info('Attempting login with credentials: ', $credentials);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended('dashboard');
         }
-        // Si las credenciales son incorrectas, redirigir con un mensaje de error
-        return back()->withErrors(['username' => 'Las credenciales no son correctas.']);
 
-        // Usando Eloquent para obtener todos los empleados
-        //$empleados = Login::all();
-        // Imprimir los datos y detener la ejecución
-        //dd($empleados);
+        logger()->error('Login failed for user: ' . $request->input('username'));
 
+        return back()->withErrors([
+            'username' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
+        ]);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
-        return redirect()->route('login'); // Cambia 'login' por la ruta de tu formulario de login
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('login');
     }
-
-    public function obtenerEmpleados()
-    {
-        // Usando Eloquent para obtener todos los empleados
-        $empleados = Empleado::all();
-
-        // Imprimir los datos y detener la ejecución
-        dd($empleados);
-    }
-
 }
 
 

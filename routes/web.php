@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\EmpleadoController;
+use App\Http\Controllers\NominaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,18 +15,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::middleware(['auth'])->group(function () {
+
+    // Ruta del dashboard
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    // Rutas de recursos para empleados
+    Route::resource('empleado', EmpleadoController::class);
+
+    // Ruta para la nómina
+    Route::get('/nominas', [NominaController::class, 'index'])->name('nomina.index');
+
 });
 
 
-use App\Http\Controllers\LoginController;
 
-Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('login', [LoginController::class, 'login'])->name('login.post');
-Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('dashboard', function () {
-    // Ruta protegida
-})->middleware('auth')->name('dashboard');
 

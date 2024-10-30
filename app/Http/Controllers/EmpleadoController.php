@@ -17,7 +17,6 @@ class EmpleadoController extends Controller
     {
         //
         //$datos['empleados']=Empleado::all();
-
         $datos['empleados']  = Empleado::orderBy('id', 'asc')->paginate(10);  // Ordenar por ID ascendente
         return view('empleado.index', $datos);
     }
@@ -29,7 +28,6 @@ class EmpleadoController extends Controller
      */
     public function create()
     {
-
         return view('empleado.create');
     }
 
